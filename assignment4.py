@@ -1,3 +1,4 @@
+# string comparison between 2 words to see if they differ by 1 char
 def string_comparison(word1, word2) -> bool:
     differ = False
     i = 0
@@ -12,6 +13,7 @@ def string_comparison(word1, word2) -> bool:
                 i += 1
                 differ = True
     return differ
+
 
 class WordGraph:
     def __init__(self, V) -> None:
@@ -62,8 +64,10 @@ class Edge:
         return_str = "[source: " + str(self.u) + ", " + "destination: " + str(self.v) + ", " + "weight: " + str(self.w) + "]"
         return return_str
 
+
+
 if __name__ == "__main__":
     vertices = ["aaa","aad","dad","daa","aca", "acc", "aab", "abb"]
     my_graph = WordGraph(vertices)
-    print(my_graph)
+    # print(my_graph)
 
