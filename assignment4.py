@@ -1,9 +1,17 @@
+from math import inf
+
+
 class Vertex:
     def __init__(self, id) -> None:
         self.id = id 
         self.edges = []
     
-    def add_edge(self, source, destination, weight):
+    def add_edge(self, tuple):
+        source = tuple[0]
+        destination = tuple[1]
+        weight = tuple[2]
+
+        # create and add new edge
         new_edge = Edge(source, destination, weight)
         self.edges.append(new_edge)
 
@@ -46,6 +54,7 @@ def string_comparison(word1, word2) -> bool:
 class WordGraph:
     def __init__(self, V) -> None:
         self.vertices = [None] * len(V)
+        self.words = V
 
         # creates all vertices in list
         for i in range(len(V)):
@@ -55,8 +64,8 @@ class WordGraph:
         for i in range(len(V)):
             for j in range(i+1, len(V)):
                 if string_comparison(V[i], V[j]):
-                    self.vertices[i].add_edge(i, j, 1)
-                    self.vertices[j].add_edge(j, i, 1)
+                    self.vertices[i].add_edge((i, j, 1))
+                    self.vertices[j].add_edge((j, i, 1))
 
     def __str__(self) -> str:
         return_str = ""
@@ -66,12 +75,58 @@ class WordGraph:
     
     # Task 1
     def best_start_word(self, target_words):
-        pass
+        
+        # unique case where there's only one word
+        if len(target_words) == 1:
+            return target_words[len(target_words)-1]
+        
+        memo = self.floyd_warshall(self.words) 
+        res = []
+
+        # go through vertical column of index memo
+        for i in range(len(self.words)):
+            dist = [] 
+            for index in target_words:
+
+                # get all ladder
+                dist.append(memo[index][i])
+            
+            # get all longest word ladder for target words
+            res.append(max(dist))
+
+        # choose shortest among all longest
+        if min(res) != 0 and min(res) != float("inf"):
+            return res.index(min(res))
+        else:
+            return -1
+            
+
+    def floyd_warshall(self, V): 
+        # initalise matrix with inf values
+        memo_matrix = [[float("inf") for _ in range(len(V))] for _ in range(len(V))]
+
+        # vertex[i][i] = 0 --> ie, vertex A to A has no edges
+        for i in range(len(V)):
+            memo_matrix[i][i] = 0
+        
+        # insert all other edges
+        for i in range(len(V)):
+            for edges in self.vertices[i].edges:
+                memo_matrix[edges.u][edges.v] = edges.w
+
+        # run algo for min distance
+        for k in range(len(V)):
+            for i in range(len(V)):
+                for j in range(len(V)):
+                    memo_matrix[i][j] = min(memo_matrix[i][j], memo_matrix[i][k] + memo_matrix[k][j])
+        
+        return memo_matrix
 
 
 
 if __name__ == "__main__":
-    vertices = ["aaa","aad","dad","daa","aca", "acc", "aab", "abb"]
-    my_graph = WordGraph(vertices)
-    print(my_graph)
+    words = ["aaa","aad","dad","daa","aca", "acc", "aab", "abb"]
+    g = WordGraph(words)
+    print(g)
+    print(g.best_start_word([2,7,5]))
 
