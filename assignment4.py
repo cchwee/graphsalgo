@@ -1,6 +1,3 @@
-from math import inf
-
-
 class Vertex:
     def __init__(self, id) -> None:
         self.id = id 
@@ -61,6 +58,10 @@ class WordGraph:
             self.vertices[i] = Vertex(V[i])
         
         # check whether to add edges - differ by 1 char
+        self.build_word_ladder(V)
+
+    # for Task 1 -> weight = 1 if differ by one char
+    def build_word_ladder(self, V):
         for i in range(len(V)):
             for j in range(i+1, len(V)):
                 if string_comparison(V[i], V[j]):
@@ -73,7 +74,7 @@ class WordGraph:
             return_str = return_str + "Vertex " + str(vertex) + "\n"
         return return_str
     
-    # Task 1
+    # Task 1 
     def best_start_word(self, target_words):
         
         # unique case where there's only one word
@@ -126,6 +127,7 @@ class WordGraph:
 
 if __name__ == "__main__":
     words = ["aaa","aad","dad","daa","aca", "acc", "aab", "abb"]
+    # words = ['aaa','bbb','bab','aaf','aaz','baz','caa','cac','dac','dad','ead','eae','bae','abf','bbf']
     g = WordGraph(words)
     print(g)
     print(g.best_start_word([2,7,5]))
