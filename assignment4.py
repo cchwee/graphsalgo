@@ -1,6 +1,7 @@
 class Vertex:
     def __init__(self, id) -> None:
         self.id = id 
+        self.value = self.calculate_value(id)
         self.edges = []
     
     def add_edge(self, tuple):
@@ -12,8 +13,14 @@ class Vertex:
         new_edge = Edge(source, destination, weight)
         self.edges.append(new_edge)
 
+    def calculate_value(self, id):
+        value = 0
+        for str in id:
+            value += ord(str)
+        return value
+
     def __str__(self) -> str:
-        return_string = str(self.id) + ", \n" + "my edges are: {"
+        return_string = str(self.id) + " with value of " + str(self.value) + ", \n" + "my edges are: {"
         for edge in self.edges:
             return_string = return_string + str(edge)
         return_string = return_string + "}"
@@ -67,6 +74,13 @@ class WordGraph:
                 if string_comparison(V[i], V[j]):
                     self.vertices[i].add_edge((i, j, 1))
                     self.vertices[j].add_edge((j, i, 1))
+
+    # for Task 2 -> update distances(weight) of edges
+    def updates_distances(self):
+        for vertex in self.vertices:
+            for edges in vertex.edges:
+                new_weight = abs(self.vertices[edges.u].value - self.vertices[edges.v].value)
+                edges.w = new_weight
 
     def __str__(self) -> str:
         return_str = ""
@@ -126,9 +140,9 @@ class WordGraph:
 
 
 if __name__ == "__main__":
-    words = ["aaa","aad","dad","daa","aca", "acc", "aab", "abb"]
-    # words = ['aaa','bbb','bab','aaf','aaz','baz','caa','cac','dac','dad','ead','eae','bae','abf','bbf']
+    # words = ["aaa","aad","dad","daa","aca", "acc", "aab", "abb"]
+    words = ['aaa','bbb','bab','aaf','aaz','baz','caa','cac','dac','dad','ead','eae','bae','abf','bbf']
     g = WordGraph(words)
+    g.updates_distances()
     print(g)
     print(g.best_start_word([2,7,5]))
-
